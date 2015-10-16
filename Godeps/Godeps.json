@@ -1,0 +1,42 @@
+{
+	"ImportPath": "github.com/pigfoot/go-ubot-oddday-checker",
+	"GoVersion": "go1.5.1",
+	"Deps": [
+		{
+			"ImportPath": "github.com/PuerkitoBio/goquery",
+			"Comment": "v0.3.2-80-g417cce8",
+			"Rev": "417cce822c7b9a379df5824be95228d177c5698b"
+		},
+		{
+			"ImportPath": "github.com/Sirupsen/logrus",
+			"Comment": "v0.8.7-30-g4643a7e",
+			"Rev": "4643a7efec9b8fd7548882e7b30095711343100f"
+		},
+		{
+			"ImportPath": "github.com/andybalholm/cascadia",
+			"Rev": "3ad29d1ad1c4f2023e355603324348cf1f4b2d48"
+		},
+		{
+			"ImportPath": "github.com/nlopes/slack",
+			"Comment": "v0.0.1-65-g4a9ff5f",
+			"Rev": "4a9ff5f6ed8bb0df51620f49ee90fc0858a2913e"
+		},
+		{
+			"ImportPath": "github.com/parnurzeal/gorequest",
+			"Comment": "v0.2.9-4-g21a6e64",
+			"Rev": "21a6e64ff1eafbfd8a1f8de5c1fe1d39bb7a63d7"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html",
+			"Rev": "21c3935a8fc0f954d03e6b8a560c9600ffee38d2"
+		},
+		{
+			"ImportPath": "golang.org/x/net/publicsuffix",
+			"Rev": "21c3935a8fc0f954d03e6b8a560c9600ffee38d2"
+		},
+		{
+			"ImportPath": "golang.org/x/net/websocket",
+			"Rev": "21c3935a8fc0f954d03e6b8a560c9600ffee38d2"
+		}
+	]
+}
