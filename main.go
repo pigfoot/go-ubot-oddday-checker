@@ -12,8 +12,8 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	log "github.com/Sirupsen/logrus"
+	"github.com/franela/goreq"
 	"github.com/nlopes/slack"
-	"github.com/parnurzeal/gorequest"
 )
 
 const (
@@ -38,7 +38,11 @@ func main() {
 		log.Fatal("SLACK_TOKEN=xxxx-1111111111-1111111111-11111111111-111111 SLACK_GROUP=GXXXXXXXX CARD_NO=1111222233334444 ./go-ubot-oddday-checker")
 	}
 
-	doc, err := goquery.NewDocument(UBOT_ODDDAY_URL)
+	res, err := goreq.Request{Uri: UBOT_ODDDAY_URL}.Do()
+	if err != nil {
+		log.Fatal(err)
+	}
+	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -61,21 +65,26 @@ func main() {
 		return
 	}
 
-	_, body, errs := gorequest.New().
-		Post(UBOT_ODDDAY_URL).
-		Set("Referer", UBOT_ODDDAY_URL).
-		Set("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:43.0) Gecko/20100101 Firefox/43.0").
-		Send("__EVENTTARGET=").
-		Send("__EVENTARGUMENT=").
-		Send("__VIEWSTATE=" + url.QueryEscape(viewstate)).
-		Send("tbCode=" + tbCode).
-		Send("__CALLBACKID=__Page").
-		Send("__CALLBACKPARAM=" + url.QueryEscape("QRY%%"+card_no+"%%"+tbCode+"%%"+tbCode+"%%")).
-		Send("__EVENTVALIDATION=" + url.QueryEscape(eventvalidation)).
-		End()
-	if errs != nil {
-		log.Fatal(errs)
+	form := url.Values{}
+	form.Add("__EVENTTARGET", "")
+	form.Add("__EVENTARGUMENT", "")
+	form.Add("__VIEWSTATE", viewstate)
+	form.Add("tbCode", tbCode)
+	form.Add("__CALLBACKID", "__Page")
+	form.Add("__CALLBACKPARAM", "QRY%%"+card_no+"%%"+tbCode+"%%"+tbCode+"%%")
+	form.Add("__EVENTVALIDATION", eventvalidation)
+
+	res, err = goreq.Request{
+		Method:      "POST",
+		Uri:         UBOT_ODDDAY_URL,
+		UserAgent:   "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:43.0) Gecko/20100101 Firefox/43.0",
+		ContentType: "application/x-www-form-urlencoded",
+		Body:        form.Encode(),
+	}.WithHeader("Referer", UBOT_ODDDAY_URL).Do()
+	if err != nil {
+		log.Fatal(err)
 	}
+	body, _ := res.Body.ToString()
 
 	// Parse the HTML into nodes
 	rp := regexp.MustCompile(`LOGINOK@@[^@]+@@([^@]+)@@[^@]+`)

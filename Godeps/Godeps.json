@@ -17,8 +17,8 @@
 			"Rev": "3ad29d1ad1c4f2023e355603324348cf1f4b2d48"
 		},
 		{
-			"ImportPath": "github.com/moul/http2curl",
-			"Rev": "1812aee76a1ce98d604a44200c6a23c689b17a89"
+			"ImportPath": "github.com/franela/goreq",
+			"Rev": "3ddeded65be21dacb5a2e2d0b95af9ff6862a2b5"
 		},
 		{
 			"ImportPath": "github.com/nlopes/slack",
@@ -26,16 +26,7 @@
 			"Rev": "4a9ff5f6ed8bb0df51620f49ee90fc0858a2913e"
 		},
 		{
-			"ImportPath": "github.com/parnurzeal/gorequest",
-			"Comment": "v0.2.13-9-gc73179d",
-			"Rev": "c73179dd31355d86bd7692de9b47623d6d0fa696"
-		},
-		{
 			"ImportPath": "golang.org/x/net/html",
-			"Rev": "6ccd6698c634f5d835c40c1c31848729e0cecda1"
-		},
-		{
-			"ImportPath": "golang.org/x/net/publicsuffix",
 			"Rev": "6ccd6698c634f5d835c40c1c31848729e0cecda1"
 		},
 		{
