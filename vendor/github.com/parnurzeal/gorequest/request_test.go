@@ -15,6 +15,29 @@ import (
 	"github.com/elazarl/goproxy"
 )
 
+// Test for Make request
+func TestMakeRequest(t *testing.T) {
+	var cases = []struct {
+		m string
+		s *SuperAgent
+	}{
+		{POST, New().Post("/")},
+		{GET, New().Get("/")},
+		{HEAD, New().Head("/")},
+		{PUT, New().Put("/")},
+		{PATCH, New().Patch("/")},
+		{DELETE, New().Delete("/")},
+		{OPTIONS, New().Options("/")},
+	}
+
+	for _, c := range cases {
+		_, err := c.s.MakeRequest()
+		if err != nil {
+			t.Errorf("Expected non-nil error for method %q; got %q", c.m, err.Error())
+		}
+	}
+}
+
 // testing for Get method
 func TestGet(t *testing.T) {
 	const case1_empty = "/"
@@ -47,6 +70,24 @@ func TestGet(t *testing.T) {
 
 	New().Get(ts.URL+case2_set_header).
 		Set("API-Key", "fookey").
+		End()
+}
+
+// testing for Options method
+func TestOptions(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// check method is OPTIONS before going to check other features
+		if r.Method != OPTIONS {
+			t.Errorf("Expected method %q; got %q", OPTIONS, r.Method)
+		}
+		t.Log("test Options")
+		w.Header().Set("Allow", "HEAD, GET")
+		w.WriteHeader(204)
+	}))
+
+	defer ts.Close()
+
+	New().Options(ts.URL).
 		End()
 }
 
@@ -573,5 +614,76 @@ func TestBasicAuth(t *testing.T) {
 	defer ts.Close()
 	New().Post(ts.URL).
 		SetBasicAuth("myusername", "mypassword").
+		End()
+}
+
+func TestXml(t *testing.T) {
+	xml := `<note><to>Tove</to><from>Jani</from><heading>Reminder</heading><body>Don't forget me this weekend!</body></note>`
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// check method is PATCH before going to check other features
+		if r.Method != POST {
+			t.Errorf("Expected method %q; got %q", POST, r.Method)
+		}
+		if r.Header == nil {
+			t.Errorf("Expected non-nil request Header")
+		}
+
+		if r.Header.Get("Content-Type") != "application/xml" {
+			t.Error("Expected Header Content-Type -> application/xml", "| but got", r.Header.Get("Content-Type"))
+		}
+
+		defer r.Body.Close()
+		body, _ := ioutil.ReadAll(r.Body)
+		if string(body) != xml {
+			t.Error(`Expected XML `, xml, "| but got", string(body))
+		}
+	}))
+
+	defer ts.Close()
+
+	New().Post(ts.URL).
+		Type("xml").
+		Send(xml).
+		End()
+
+	New().Post(ts.URL).
+		Set("Content-Type", "application/xml").
+		Send(xml).
+		End()
+}
+
+func TestPlainText(t *testing.T) {
+	text := `hello world \r\n I am GoRequest`
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// check method is PATCH before going to check other features
+		if r.Method != POST {
+			t.Errorf("Expected method %q; got %q", POST, r.Method)
+		}
+		if r.Header == nil {
+			t.Errorf("Expected non-nil request Header")
+		}
+		if r.Header.Get("Content-Type") != "text/plain" {
+			t.Error("Expected Header Content-Type -> text/plain", "| but got", r.Header.Get("Content-Type"))
+		}
+
+		defer r.Body.Close()
+		body, _ := ioutil.ReadAll(r.Body)
+		if string(body) != text {
+			t.Error(`Expected text `, text, "| but got", string(body))
+		}
+	}))
+
+	defer ts.Close()
+
+	New().Post(ts.URL).
+		Type("text").
+		Send(text).
+		End()
+
+	New().Post(ts.URL).
+		Set("Content-Type", "text/plain").
+		Send(text).
 		End()
 }
