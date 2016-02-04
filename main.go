@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	UBOT_ODDDAY_URL = "https://card.ubot.com.tw/eCard/activity_login/oddDay.aspx"
+	UBOT_ODDDAY_URL = "https://card.ubot.com.tw/eCard/activity_login/oddDay2016.aspx"
 	TITLE           = "聯邦奇數日檢查"
 )
 
@@ -63,12 +63,14 @@ func main() {
 
 	_, body, errs := gorequest.New().
 		Post(UBOT_ODDDAY_URL).
+		Set("Referer", UBOT_ODDDAY_URL).
+		Set("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:43.0) Gecko/20100101 Firefox/43.0").
 		Send("__EVENTTARGET=").
 		Send("__EVENTARGUMENT=").
 		Send("__VIEWSTATE=" + url.QueryEscape(viewstate)).
 		Send("tbCode=" + tbCode).
 		Send("__CALLBACKID=__Page").
-		Send("__CALLBACKPARAM=" + url.QueryEscape("QRY%%CHK%%"+card_no+"%%"+tbCode+"%%"+tbCode+"%%")).
+		Send("__CALLBACKPARAM=" + url.QueryEscape("QRY%%"+card_no+"%%"+tbCode+"%%"+tbCode+"%%")).
 		Send("__EVENTVALIDATION=" + url.QueryEscape(eventvalidation)).
 		End()
 	if errs != nil {
@@ -76,7 +78,7 @@ func main() {
 	}
 
 	// Parse the HTML into nodes
-	rp := regexp.MustCompile(`QRY@@CHK@@([^@]+)@@@@`)
+	rp := regexp.MustCompile(`LOGINOK@@[^@]+@@([^@]+)@@[^@]+`)
 	m := rp.FindStringSubmatch(body)
 	if m == nil {
 		log.Fatalf("Cannot find expected response: %s", body)
