@@ -1,1 +1,3 @@
-go-ubot-oddday-checker
+glide.lock
+vendor/**
+bin/**

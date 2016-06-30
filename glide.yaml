@@ -1,0 +1,7 @@
+package: github.com/pigfoot/go-ubot-oddday-checker
+import:
+- package: github.com/PuerkitoBio/goquery
+- package: github.com/Sirupsen/logrus
+  version: ^0.x
+- package: github.com/franela/goreq
+- package: github.com/nlopes/slack
